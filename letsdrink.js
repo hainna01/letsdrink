@@ -34,11 +34,14 @@ if (Meteor.isClient) {
     "click .toggle-owned": function (event) {
     // Set the checked property to the opposite of its current value
        Meteor.call("updateCollection", this._id, event.target.checked);
-  },
-  "click .delete": function () {
-    Meteor.call("deleteAlcohol", this._id);
   }
   })
+  
+     Template.alcohol.helpers({ 
+      isOwner: function(){
+        return UserAlcohols.find( {user: Meteor.userId(),alcohol: this._id, owned: true}).count() > 0;
+      }
+    });
   
     Template.MyAlcohols.helpers({
     alcohols: function(){
@@ -56,7 +59,7 @@ if (Meteor.isClient) {
     Meteor.call("deleteAlcohol", this._id);
   }
   });
-    Template.alcohol.helpers({ 
+    Template.myalcohol.helpers({ 
       isOwner: function(){
         return UserAlcohols.find( {user: Meteor.userId(),alcohol: this._id, owned: true}).count() > 0;
       }
@@ -96,7 +99,7 @@ Meteor.methods({
     });
   },
   deleteAlcohol: function (id) {
-    //Alcohols.remove(id);
+    UserAlcohols.remove({alcohol:id, user:Meteor.userId()});
   },
   setOwned: function (id, setOwned) {
     if (! Meteor.userId()) {
@@ -111,7 +114,7 @@ Meteor.methods({
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
-    var myalcohols = UserAlcohols.find( {user: Meteor.userId(),alcohol: this._id}).count();
+    var myalcohols = UserAlcohols.find( {user: Meteor.userId(),alcohol: id}).count();
     if (myalcohols === 0){
       UserAlcohols.insert({
       user: Meteor.userId(),

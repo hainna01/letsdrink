@@ -11,9 +11,11 @@
       <h1>Alcohol List</h1>
       <a href="/myalcohols">My Alcohols</a>
       {{> loginButtons}}
+      {{#if currentUser}}
       <form class="new-alcohol">
         <input type="text" name="text" placeholder="Type to add new alcohol"/>
       </form>
+      {{/if}}
     </header>
 
     <ul>
@@ -26,7 +28,6 @@
   
 <template name="alcohol">
   <li class="{{#if isOwner}}owned{{/if}}">
-    <button class="delete">&times;</button>
 
     <input type="checkbox" checked="{{isOwner}}" class="toggle-owned" />
 
@@ -43,8 +44,18 @@
 
     <ul>
       {{#each alcohols}}
-        {{> alcohol}}
+        {{> myalcohol}}
       {{/each}}
     </ul>
   </div>
   </template>
+
+<template name="myalcohol">
+  <li class="{{#if isOwner}}owned{{/if}}">
+    <button class="delete">&times;</button>
+
+    <input type="checkbox" checked="{{isOwner}}" class="toggle-owned" />
+
+    <span class="text">{{name}}</span>
+  </li>
+</template>
