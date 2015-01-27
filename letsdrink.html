@@ -1,14 +1,50 @@
 <head>
-  <title>letsdrink</title>
+  <title>Alcohol List</title>
 </head>
 
-<body>
-  <h1>Welcome to Meteor!</h1>
+<body></body>
 
-  {{> hello}}
-</body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="Alcohols">
+  <div class="container">
+    <header>
+      <h1>Alcohol List</h1>
+      <a href="/myalcohols">My Alcohols</a>
+      {{> loginButtons}}
+      <form class="new-alcohol">
+        <input type="text" name="text" placeholder="Type to add new alcohol"/>
+      </form>
+    </header>
+
+    <ul>
+      {{#each alcohols}}
+        {{> alcohol}}
+      {{/each}}
+    </ul>
+  </div>
 </template>
+  
+<template name="alcohol">
+  <li class="{{#if isOwner}}owned{{/if}}">
+    <button class="delete">&times;</button>
+
+    <input type="checkbox" checked="{{isOwner}}" class="toggle-owned" />
+
+    <span class="text">{{name}}</span>
+  </li>
+</template>
+  
+ <template name="MyAlcohols">
+   <div class="container">
+    <header>
+      <h1>My Alcohols</h1>
+      <a href="/">All Alcohols</a>
+    </header>
+
+    <ul>
+      {{#each alcohols}}
+        {{> alcohol}}
+      {{/each}}
+    </ul>
+  </div>
+  </template>
