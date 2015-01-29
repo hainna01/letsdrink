@@ -1,20 +1,29 @@
 Alcohols = new Mongo.Collection("alcohols");
 UserAlcohols = new Mongo.Collection('useralcohols');
+Recipes = new Mongo.Collection('recipes');
 
 Router.route('/', function () {
-  // render the Home template with a custom data context
   this.render('Alcohols');
 });
 
 Router.route('/myalcohols', function () {
-  // render the Home template with a custom data context
   this.render('MyAlcohols');
 });
+
+Router.route('/createRecipe', function () {
+  this.render('CreateRecipe');
+});
+
+Router.route('/recipes', function () {
+  this.render('AllRecipes');
+});
+
 
 if (Meteor.isClient) {
     Meteor.subscribe("alcohols");
     Meteor.subscribe("userAlcohols");
-
+    Meteor.subscribe("recipes");
+  
   Template.Alcohols.helpers({
     alcohols: function(){
       return Alcohols.find({}, {sort:{name: 1}});
@@ -65,6 +74,36 @@ if (Meteor.isClient) {
       }
     });
   
+  Template.CreateRecipe.events({
+    "submit .new-recipe": function(event){
+      var alcohols = event.target.alcoholCheckbox;
+      var recipeName = event.target.recipeName.value;
+      var filtered = _.filter(alcohols, function(alcohol){ return alcohol.checked;});
+      var ids = _.map(filtered, function(alcohol){ return $(alcohol).data("key");});
+      Recipes.insert({
+        name: recipeName,
+        ingredients: ids
+      });
+    }
+  });
+  Template.CreateRecipe.helpers({
+    alcohols: function(){
+      return Alcohols.find({}, {sort:{name: 1}});
+    }
+  });
+  
+    Template.AllRecipes.helpers({
+    recipes: function(){
+      return Recipes.find({}, {sort:{name: 1}});
+    }
+  });
+  
+  Template.recipe.helpers({
+    ingredients: function(){
+      return Alcohols.find({_id: {$in: this.ingredients}});
+    }
+  });
+  
 Accounts.ui.config({
   passwordSignupFields: "USERNAME_ONLY"
 });
@@ -82,10 +121,14 @@ if (Meteor.isServer) {
     Meteor.publish("userAlcohols", function(){
       return UserAlcohols.find({user: this.userId});
   });
+  
+  Meteor.publish("recipes", function(){
+      return Recipes.find({});
+  });
 }
 
 Meteor.methods({
-  addAlcohols: function (text) {
+  addAlcohol: function (text) {
     // Make sure the user is logged in before inserting a task
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");

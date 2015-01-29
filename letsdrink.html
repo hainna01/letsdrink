@@ -4,13 +4,19 @@
 
 <body></body>
 
+<template name="navBar">
+        <a href="/">All Alcohols</a>
+        <a href="/myalcohols">My Alcohols</a>
+        <a href="/createRecipe">Create Recipe</a>
+        <a href="/recipes">All Recipes</a>
+      {{> loginButtons}}
+</template>
 
 <template name="Alcohols">
   <div class="container">
     <header>
       <h1>Alcohol List</h1>
-      <a href="/myalcohols">My Alcohols</a>
-      {{> loginButtons}}
+      {{> navBar}}
       {{#if currentUser}}
       <form class="new-alcohol">
         <input type="text" name="text" placeholder="Type to add new alcohol"/>
@@ -39,7 +45,7 @@
    <div class="container">
     <header>
       <h1>My Alcohols</h1>
-      <a href="/">All Alcohols</a>
+      {{> navBar}}
     </header>
 
     <ul>
@@ -58,4 +64,61 @@
 
     <span class="text">{{name}}</span>
   </li>
+</template>
+
+
+<template name="CreateRecipe">
+  <div class="container">
+    <header>
+      <h1>Create Recipe</h1>
+      
+      {{> navBar}}
+    </header>
+
+      {{#if currentUser}}
+      <form class="new-recipe">
+        <input type="text" name="recipeName" placeholder="Recipe Name"/>
+        <ul class="ingredients">
+          {{#each alcohols}}
+              {{> recipeAlcohol}}
+          {{/each}}
+        </ul>
+        <input type="submit" value="Submit">
+      </form>
+      {{/if}}
+  </div>
+</template>
+
+<template name="recipeAlcohol">
+  <li>
+    <input name="alcoholCheckbox" type="checkbox" data-key="{{_id}}" />
+    <span class="text">{{name}}</span>
+  </li>
+</template>
+
+
+<template name="AllRecipes">
+  
+  <div class="container">
+    <header>
+      <h1>All Recipes</h1>
+      {{> navBar}}
+    </header>
+  
+    {{#each recipes}}
+     {{> recipe}}
+    <br/>
+    {{/each}}
+  </div>
+</template>
+
+<template name="recipe">
+  <ul>
+    <li><strong>{{name}}</strong></li>
+    <ul>
+      {{#each ingredients}}
+          <li>{{name}}</li>
+      {{/each}}
+    </ul>
+  </ul>
 </template>
